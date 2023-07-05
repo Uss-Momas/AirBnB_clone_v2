@@ -7,10 +7,21 @@ class FileStorage:
     """This class manages storage of hbnb models in JSON format"""
     __file_path = 'file.json'
     __objects = {}
+    classes = ["State", "Amenity", "Place", "City", "BaseModel", "User",
+               "Review"]
 
-    def all(self):
+    def all(self, cls=None):
         """Returns a dictionary of models currently in storage"""
-        return FileStorage.__objects
+        if cls is None:
+            return FileStorage.__objects
+        class_name = cls.__name__
+        new_dict = {}
+        if class_name in FileStorage.classes:
+            for key, value in FileStorage.__objects.items():
+                key_class = key.split(".")[0]
+                if key_class == class_name:
+                    new_dict[key] = value
+        return new_dict
 
     def new(self, obj):
         """Adds new object to storage dictionary"""
@@ -22,7 +33,8 @@ class FileStorage:
             temp = {}
             temp.update(FileStorage.__objects)
             for key, val in temp.items():
-                temp[key] = val.to_dict()
+                if key != '_sa_instance_state':
+                    temp[key] = val.to_dict()
             json.dump(temp, f)
 
     def reload(self):
@@ -45,6 +57,18 @@ class FileStorage:
             with open(FileStorage.__file_path, 'r') as f:
                 temp = json.load(f)
                 for key, val in temp.items():
-                        self.all()[key] = classes[val['__class__']](**val)
+                    self.all()[key] = classes[val['__class__']](**val)
         except FileNotFoundError:
             pass
+
+    def delete(self, obj=None):
+        """Method to delete a obj"""
+        if obj is None:
+            return
+        cls_name_id = obj.to_dict()["__class__"] + "." + obj.id
+        del FileStorage.__objects[cls_name_id]
+
+    def close(self):
+        """close method: that call reload() to deserialize JSON file to objects
+        """
+        self.reload()
