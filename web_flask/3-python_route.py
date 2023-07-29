@@ -24,11 +24,11 @@ def c(text):
     return "C {}".format(text.replace("_", " "))
 
 
-@app.route("/python")
+@app.route("/python", strict_slashes=False)
 @app.route("/python/<text>", strict_slashes=False)
 def python(text="is cool"):
     """Optional parameter"""
-    return text
+    return "Python {}".format(text.replace("_", " "))
 
 
 if __name__ == "__main__":
