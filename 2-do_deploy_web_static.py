@@ -5,7 +5,7 @@ from datetime import datetime
 from fabric.network import ssh
 ssh.util.log_to_file("paramiko.log", 10)
 
-env.hosts = ["54.208.202.40", "100.24.255.115"]
+env.hosts = ["100.26.215.161", "100.24.255.115"]
 env.user = "ubuntu"
 env.key_filename = '~/.ssh/id_rsa'
 
